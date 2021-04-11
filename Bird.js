@@ -9,8 +9,8 @@ class Bird extends BaseClass{
       display(){
         super.display()
         var pos = this.body.position
-        console.log(this.body)
-        if(this.body.position.x > 200){
+        //console.log(this.body)
+        if(this.body.position.x > 200 && gameState === 'launched'){
           this.trajectory.push([pos.x,pos.y])
         }
 //          console.log(this.trajectory)

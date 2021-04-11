@@ -16,10 +16,11 @@ var bird
 var bg, platform;
 var gameState = "onSling" // the other possible game state is launched
 
-function preload(){
+var score=0;
+var count=5;
 
-   bg = loadImage("sprites/bg.png")
-
+function preload(){   
+   getTime()
 }
 
 function setup() {
@@ -56,18 +57,24 @@ function setup() {
   console.log(bird)
   bird = new Bird(200,70)
 
-  sling = new slingshot(bird.body,{x:200,y:100})
-
+  sling = new slingshot(bird.body,{x:200,y:70})
+  blueBird = new  Bbird(width-325,300)
   
 }
 
 function draw() {
   Engine.update(myengine)
-  background(bg);  
+  // bg is the variable where we are loading the image, hour and this again is a time taking 
+  if(bg){
+    background(bg); 
+  }
+  else{
+    background("cyan")
+  }
 
  // bird.body.position.x = mouseX
  // bird.body.position.y = mouseY
-
+  text("SCORE:" + score , 1000,50)
   ground.display()
 
   box1.display()
@@ -88,6 +95,11 @@ function draw() {
   platform.display()
   sling.display()
 
+  if(count===0){
+    gameState = "end"
+    text(" GAME OVER!! ", width/2-100, height/2)
+  } 
+  blueBird.display()
   //x1,y1
  // line(bird.body.position.x,bird.body.position.y,cLog.body.position.x,cLog.body.position.y)
 }
@@ -100,8 +112,11 @@ function mouseDragged(){
 }
 
 function mouseReleased(){
-   sling.fly()
-   gameState = "launched"
+  if(gameState === "onSling"){
+    sling.fly()
+    gameState = "launched"
+    count= count-1
+  }
 }
 
 function keyPressed(){
@@ -109,6 +124,22 @@ function keyPressed(){
     Matter.Body.setPosition(bird.body,{x:200,y:10})
     sling.attach(bird.body)
     gameState = "onSling"
+    bird.trajectory = []
   }
  
+}
+
+async function getTime(){
+  //Make API
+  var response = await fetch("https://worldtimeapi.org/api/timezone/Asia/Kolkata")
+
+  var responseJSON = await response.json()
+  var hour = responseJSON["datetime"].slice(11,13)
+  //console.log(hour)
+  if(hour > 18 && hour < 6){
+    bg = loadImage("sprites/bg2.jpg")
+  }else{
+    bg = loadImage("sprites/bg.png")
+  } 
+
 }
